@@ -21,7 +21,7 @@ namespace SecretHistories.Infrastructure.Persistence
         {
             string persistentDataPath = Watchman.Get<MetaInfo>().PersistentDataPath;
 
-            return $"{persistentDataPath}/save.json";
+            return $"{persistentDataPath}/save_dev.json";
         }
 
         public void PurgeSaveFileIrrevocably()
