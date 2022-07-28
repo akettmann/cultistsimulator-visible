@@ -157,21 +157,7 @@ namespace SecretHistories.Services
 
         public void LoadFirstScene(bool skipLogo)
         {
-
-            if (Application.isEditor)
-            {
-                if (StartingSceneNumber > 0)
-                    SceneChange(StartingSceneNumber.ToString(),true);
-            }
-            
-            else
-            {
-
-                if (skipLogo)
-                    SceneChange(Watchman.Get<Compendium>().GetSingleEntity<Dictum>().QuoteScene, false);
-                else
-                    SceneChange(Watchman.Get<Compendium>().GetSingleEntity<Dictum>().LogoScene, false);
-            }
+        MenuScreen();
         }
     }
 
