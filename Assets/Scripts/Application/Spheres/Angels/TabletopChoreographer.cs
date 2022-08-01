@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using FlyingWormConsole3;
 using SecretHistories.Choreographers;
 using SecretHistories.Commands;
 using SecretHistories.Entities;
@@ -32,15 +34,16 @@ namespace SecretHistories.Constants
 
         //remember: there are also currently-aligned magic number values in the initial card setup that need to be manually changed until I refactor the gridsnap out into settings
 
-
         public void GroupAllStacks()
         {
-            var stackTokens = Sphere.GetElementTokens();
-            var groups = stackTokens
-                .GroupBy(e => e.Payload.GetSignature(), e => e)
-                .Select(group => group.OrderByDescending(e => e.Payload.Quantity).ToList());
-
-            foreach (var group in groups)
+            // Get all of the tokens, tokens are the thing that represents a stack or something like that.
+            var stackQuery = from token in Sphere.GetElementTokens()
+                orderby token.Payload.Quantity descending // Tallest stacks first
+                group token by token.Payload.GetSignature() // Group them by their signature, like `
+                into tokenGroup
+                where tokenGroup.Count() > 1
+                select tokenGroup;
+            foreach (var group in stackQuery)
             {
                 var primaryStackToken = group.First();
 
