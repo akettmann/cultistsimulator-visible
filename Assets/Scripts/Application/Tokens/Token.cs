@@ -48,7 +48,9 @@ namespace SecretHistories.UI {
         IPointerExitHandler, IInteractsWithTokens,IEncaustable
     {
         private float previousClickTime = 0f;
-
+        
+        [Encaust]
+        public double LastUserMovedTime { get; set; } = 0;
  
         [DontEncaust]
         public RectTransform TokenRectTransform => GetComponent<RectTransform>();
@@ -748,6 +750,12 @@ namespace SecretHistories.UI {
                 CompleteDrag();
         }
 
+        private double secFromEpoch()
+        {
+            var secs = DateTime.UtcNow - DateTime.UnixEpoch;
+            return Math.Floor(secs.TotalSeconds);
+
+        }
         public void CompleteDrag()
         {
             Watchman.Get<Meniscate>().ClearCurrentlyDraggedToken();
@@ -759,7 +767,13 @@ namespace SecretHistories.UI {
             if (!CurrentState.Docked() && !CurrentState.InSystemDrivenMotion())
                 //evict the token before hiding the ghost. If the ghost is still active, it'll give the evicted token a place to go.
                 this.Sphere.EvictToken(this,new Context(Context.ActionSource.PlayerDrag));
+            else if (CurrentState.Docked() && CurrentState.InPlayerDrivenMotion())
+            {
+                // if we found an end home, and the player did it, this should be the primary sorting for the
+                // primary pile.
+                LastUserMovedTime = secFromEpoch();
 
+            }
             //Commented this out: we're now hiding a ghost when a token travel itinerary completes instead.
             //This is because FinishDrag() is also used for path itineraries.
             //If the change causes problems, we can fork logic here instead?
